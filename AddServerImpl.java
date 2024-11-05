@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf {
 
@@ -45,30 +44,38 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
   
 
 
-  public static boolean isvalidDataHora(String dataHora) {
-      // Definindo o formato esperado
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-      dateFormat.setLenient(false); // Não permitir datas inválidas
-
-      try {
-          // Tenta analisar a data
-          Date date = dateFormat.parse(dataHora);
-          
-          // Extrai a hora
-          int hour = date.getHours();
-          // Verifica se a hora está entre 8 (08:00) e 20 (20:00)
-          if (hour < 8 || hour > 20) {
-            System.out.println("Erro: A clinica está fechada às " + hour + " horas.");
-            return false;
-          }
-          System.out.println("A data e a hora são válidas.");
-          return true;
-      } catch (ParseException e) {
-          // Se ocorrer uma exceção, a string não está no formato correto
-          System.out.println( "Erro no formato da data e da hora");
-          return false;
-      }
+public static boolean isValidDataHora(String dataHora) {
+  // Verifica se o formato está correto
+  String regex = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}";
+  if (!dataHora.matches(regex)) {
+      System.out.println("Erro no formato da data e da hora.");
+      return false;
   }
+
+  // Divide a data e a hora
+  String[] parts = dataHora.split(" ");
+  String timePart = parts[1]; // Parte da hora no formato HH:mm
+
+  // Extrai horas e minutos
+  String[] timeComponents = timePart.split(":");
+  int hour = Integer.parseInt(timeComponents[0]);
+  int minute = Integer.parseInt(timeComponents[1]);
+
+  // Verifica se a hora está dentro do intervalo permitido
+  if (hour < 8 || hour > 20) {
+      System.out.println("Erro: A clínica está fechada às " + hour + " horas.");
+      return false;
+  }
+
+  // Verifica se os minutos estão entre 0 e 59
+  if (minute < 0 || minute >= 60) {
+      System.out.println("Erro: Minutos inválidos.");
+      return false;
+  }
+
+  System.out.println("A data e a hora são válidas.");
+  return true;
+}
 
   @Override
 public String marcarConsulta(int idClient, int idMedico, String dataHora) throws RemoteException {
@@ -78,7 +85,7 @@ public String marcarConsulta(int idClient, int idMedico, String dataHora) throws
 
     //as consultas são das 8:00 às 20:00
     //O formato da string dataHora é "yyyy-mm-dd hh:mm"
-    if (isvalidDataHora(dataHora)) {
+    if (isValidDataHora(dataHora)) {
       return "Erro";
     } //verifica e dá uma mensagem de feedback no terminal
   
