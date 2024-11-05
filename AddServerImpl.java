@@ -56,7 +56,7 @@ public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID,
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
       Statement stmt = conn.createStatement();
       String sql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " + 
-                    "VALUES (" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID + ")";
+                    "VALUES ('" + ano + "-" + mes + "-" + dia + " " + hora + ":00', " + clientID + ", " + medicID + ")";
               
       int x = stmt.executeUpdate(sql);
       
