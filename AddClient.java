@@ -27,7 +27,8 @@ public class AddClient {
       } else if (args[1].trim().equals("listarConsultas")){
 
         if (args.length == 3) {
-          System.out.println("Output: " + addServerIntf.listarConsultas(cliente));
+          String idClient = args[2].trim();
+          System.out.println("Output: " + addServerIntf.listarConsultas(idClient));
         }
 
       } else if (args[1].trim().equals("listarMedicos")){
