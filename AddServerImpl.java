@@ -62,41 +62,40 @@ public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID,
       
       if (x == 0){            
         return "Erro a marcar a consulta";  
-          
       }
-        } catch (SQLException e) {
-        e.printStackTrace();
-        throw new RemoteException("Erro ao marcar consulta", e);
+
+    } catch (SQLException e) {
+    e.printStackTrace();
+    throw new RemoteException("Erro ao marcar consulta: ", e);
   }
 
-  return "Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID;            
+  return "Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, Cliente: " + clientID + ", Médico: " + medicID;            
 
 }
 
 @Override
-public String cancelarConsulta(int idClient, String dataHora) throws RemoteException {
+public String cancelarConsulta(int dia, int mes, int  ano, int hora, int clientID) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";
 
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-        String sql = "DELETE FROM Consulta WHERE Cliente_idCliente = ? AND data = ?";;
+      Statement stmt = conn.createStatement();
+      String sql = "DELETE FROM Consulta WHERE data = '" + ano + "-" + mes + "-" + dia + " " + hora + ":00' AND Cliente_idCliente = " + clientID;
+      
+      int x = stmt.executeUpdate(sql);
+      
+      if (x == 0){            
+        return "Erro a marcar a consulta";  
+      }
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idClient);
-            stmt.setString(2, dataHora);
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                return "Consulta cancelada com sucesso: " + dataHora + " - Cliente: " + idClient;
-            } else {
-                throw new RemoteException("Erro: a consulta não foi marcada. Verifique os dados fornecidos.");
-            }
-        }
     } catch (SQLException e) {
         e.printStackTrace();
         throw new RemoteException("Erro ao marcar consulta", e);
   }
+
+  return "Consulta cancelada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, Cliente: " + clientID;
+
 }
 
 @Override
