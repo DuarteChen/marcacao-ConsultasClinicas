@@ -4,8 +4,19 @@ public class AddClient {
     try {
       String addServerURL = "rmi://" + args[0] + "/AddServer";
       AddServerIntf addServerIntf = (AddServerIntf)Naming.lookup(addServerURL);
-      
-    if (args[1].trim().equals("listarConsultasDeCliente")){
+      if (args[1].trim().equals("cancelarConsulta")){
+        if (args.length == 4) {
+          System.out.println("Data: " + args[2]);
+          String dataHora = args[2];
+          
+          System.out.println("Client: " + args[3]);
+          int clientID = Integer.parseInt(args[3].trim());
+          
+          System.out.println("Output: " + addServerIntf.cancelarConsulta(clientID, dataHora));
+          } else {
+            System.out.println("Output: Número de argumentos errado");
+          }
+    } else if (args[1].trim().equals("listarConsultasDeCliente")){
         System.out.println("Cliente: " + args[2]);
         String cliente = args[2];
         System.out.println("Output: " + addServerIntf.listConsultas(cliente));

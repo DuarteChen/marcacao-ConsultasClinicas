@@ -22,7 +22,7 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
       String sql = "SELECT M.* FROM Medico M JOIN Clinica C ON M.Clinica_idClinica = C.idClinica WHERE C.nome = ?";
       try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-        stmt.setString(1, clinicName); // Substitua 'A' por um valor dinâmico conforme necessário
+        stmt.setString(1, clinicName);
 
         try (ResultSet rs = stmt.executeQuery()) {
           while (rs.next()) {
@@ -65,7 +65,33 @@ public String marcarConsulta(int idClient, int idMedico, String dataHora) throws
     } catch (SQLException e) {
         e.printStackTrace();
         throw new RemoteException("Erro ao marcar consulta", e);
-    }
+  }
+}
+
+@Override
+public String cancelarConsulta(int idClient, String dataHora) throws RemoteException {
+    String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+    String user = "user";
+    String password = "user";
+
+    try (Connection conn = DriverManager.getConnection(url, user, password)) {
+        String sql = "DELETE FROM Consulta WHERE Cliente_idCliente = ? AND data = ?";;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, dataHora);
+            stmt.setInt(2, idClient);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                return "Consulta cancelada com sucesso: " + dataHora + " - Cliente: " + idClient + "; Médico: " + idMedico;
+            } else {
+                throw new RemoteException("Erro: a consulta não foi marcada. Verifique os dados fornecidos.");
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new RemoteException("Erro ao marcar consulta", e);
+  }
 }
 
 @Override
