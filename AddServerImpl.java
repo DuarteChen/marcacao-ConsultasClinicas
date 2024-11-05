@@ -78,8 +78,8 @@ public String cancelarConsulta(int idClient, String dataHora) throws RemoteExcep
         String sql = "DELETE FROM Consulta WHERE Cliente_idCliente = ? AND data = ?";;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, idClient);
-            stmt.setInt(2, dataHora);
+            stmt.setInt(1, idClient);
+            stmt.setString(2, dataHora);
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
