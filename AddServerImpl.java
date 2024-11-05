@@ -13,7 +13,7 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
   }
 
   @Override
-  public String listMedics(String clinicName) throws RemoteException {
+  public String listarMedicos(String clinicName) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";
@@ -78,8 +78,8 @@ public String cancelarConsulta(int idClient, String dataHora) throws RemoteExcep
         String sql = "DELETE FROM Consulta WHERE Cliente_idCliente = ? AND data = ?";;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, dataHora);
-            stmt.setInt(2, idClient);
+            stmt.setString(1, idClient);
+            stmt.setInt(2, dataHora);
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -95,7 +95,7 @@ public String cancelarConsulta(int idClient, String dataHora) throws RemoteExcep
 }
 
 @Override
-public String listConsultas(String idCliente) throws RemoteException {
+public String listarConsultas(String idCliente) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";

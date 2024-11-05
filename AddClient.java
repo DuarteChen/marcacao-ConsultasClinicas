@@ -5,6 +5,8 @@ public class AddClient {
       String addServerURL = "rmi://" + args[0] + "/AddServer";
       AddServerIntf addServerIntf = (AddServerIntf)Naming.lookup(addServerURL);
       if (args[1].trim().equals("cancelarConsulta")){
+
+      
         if (args.length == 4) {
           System.out.println("Data: " + args[2]);
           String dataHora = args[2];
@@ -16,14 +18,16 @@ public class AddClient {
           } else {
             System.out.println("Output: Número de argumentos errado");
           }
+
+
     } else if (args[1].trim().equals("listarConsultasDeCliente")){
         System.out.println("Cliente: " + args[2]);
         String cliente = args[2];
-        System.out.println("Output: " + addServerIntf.listConsultas(cliente));
+        System.out.println("Output: " + addServerIntf.listarConsultas(cliente));
     } else if (args[1].trim().equals("listarMedicosDe")){
         System.out.println("Clinica: " + args[2]);
         String clinica = args[2];
-        System.out.println("Output: " + addServerIntf.listMedics(clinica));
+        System.out.println("Output: " + addServerIntf.listarMedicos(clinica));
     } else if (args[1].trim().equals("marcar")) {
     
         if (args.length == 5) {
@@ -48,4 +52,13 @@ public class AddClient {
       System.out.println("Exception: " + e);
     }
   }
+
+
+
+
+
+
+
+
+
 }
