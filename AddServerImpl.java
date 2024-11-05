@@ -41,71 +41,30 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
 
     return result.length() > 0 ? result.toString() : "Nenhum médico encontrado.";
   }
-  
-
-
-public static boolean isValidDataHora(String dataHora) {
-  // Verifica se o formato está correto
-  String regex = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}";
-  if (!dataHora.matches(regex)) {
-      System.out.println("Erro no formato da data e da hora.");
-      return false;
-  }
-
-  // Divide a data e a hora
-  String[] parts = dataHora.split(" ");
-  String timePart = parts[1]; // Parte da hora no formato HH:mm
-
-  // Extrai horas e minutos
-  String[] timeComponents = timePart.split(":");
-  int hour = Integer.parseInt(timeComponents[0]);
-  int minute = Integer.parseInt(timeComponents[1]);
-
-  // Verifica se a hora está dentro do intervalo permitido
-  if (hour < 8 || hour > 20) {
-      System.out.println("Erro: A clínica está fechada às " + hour + " horas.");
-      return false;
-  }
-
-  // Verifica se os minutos estão entre 0 e 59
-  if (minute < 0 || minute >= 60) {
-      System.out.println("Erro: Minutos inválidos.");
-      return false;
-  }
-
-  System.out.println("A data e a hora são válidas.");
-  return true;
-}
 
   @Override
-public String marcarConsulta(int idClient, int idMedico, String dataHora) throws RemoteException {
+public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID, int medicID) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";
 
-    //as consultas são das 8:00 às 20:00
-    //O formato da string dataHora é "yyyy-mm-dd hh:mm"
-    if (isValidDataHora(dataHora)) {
-      return "Erro";
-    } //verifica e dá uma mensagem de feedback no terminal
-  
+    if (hora < 8 || hora > 20) {
+      return "Às " + hora + ":00 a clínica está fechada";
+    }
+    
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-        String sql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " + 
-                     "VALUES (?, ?, ?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, dataHora);
-            stmt.setInt(2, idClient);
-            stmt.setInt(3, idMedico);
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                return "Consulta marcada com sucesso: " + dataHora + " - Cliente: " + idClient + "; Médico: " + idMedico;
-            } else {
-                throw new RemoteException("Erro: a consulta não foi marcada. Verifique os dados fornecidos.");
-            }
-        }
-    } catch (SQLException e) {
+      Statement stmt = con.createStatement();
+      String sql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " + 
+                    "VALUES (" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID + ")";
+              
+      int x = stmt.executeUpdate(sql);
+      
+      if (x > 0){            
+          System.out.println("Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID);            
+      } else {
+          System.out.println("Erro a marcar a consulta");  
+      }
+        } catch (SQLException e) {
         e.printStackTrace();
         throw new RemoteException("Erro ao marcar consulta", e);
   }

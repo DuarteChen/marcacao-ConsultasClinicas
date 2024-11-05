@@ -28,19 +28,21 @@ public class AddClient {
         System.out.println("Clinica: " + args[2]);
         String clinica = args[2];
         System.out.println("Output: " + addServerIntf.listarMedicos(clinica));
-    } else if (args[1].trim().equals("marcar")) {
+    } else if (args[1].trim().equals("marcarConsulta")) {
     
-        if (args.length == 5) {
-        System.out.println("Data: " + args[2]);
-        String dataHora = args[2];
+        if (args.length == 8) {
+
+        Int dia = Interger.parseInt(args[2]);
+        String mes = Interger.parseInt(args[3]);
+        String ano = Interger.parseInt(args[4]);
+        String hora = Interger.parseInt(args[5]);
+
+        int clientID = Integer.parseInt(args[6].trim());
         
-        System.out.println("Client: " + args[3]);
-        int clientID = Integer.parseInt(args[3].trim());
+        int medicID = Integer.parseInt(args[7].trim());
+        System.out.println(" A tentar marcar consulta para o dia: " + dia + "-"+ mes + "-" + ano + " às " + hora + ":00 Para " + clientID + " com médico " + medicID);
         
-        System.out.println("Medic: " + args[4]);
-        int medicID = Integer.parseInt(args[4].trim());
-        
-        System.out.println("Output: " + addServerIntf.marcarConsulta(clientID, medicID, dataHora));
+        System.out.println("Output: " + addServerIntf.marcarConsulta(dia, mes , ano, hora, clientID, medicID));
         } else {
           System.out.println("Output: Número de argumentos errado");
         }
