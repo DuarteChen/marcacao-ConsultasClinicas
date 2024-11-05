@@ -83,7 +83,7 @@ public String cancelarConsulta(int idClient, String dataHora) throws RemoteExcep
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
-                return "Consulta cancelada com sucesso: " + dataHora + " - Cliente: " + idClient + "; Médico: " + idMedico;
+                return "Consulta cancelada com sucesso: " + dataHora + " - Cliente: " + idClient;
             } else {
                 throw new RemoteException("Erro: a consulta não foi marcada. Verifique os dados fornecidos.");
             }
