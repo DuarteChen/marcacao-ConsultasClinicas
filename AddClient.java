@@ -35,7 +35,7 @@ public class AddClient {
 
         if (args.length == 3) {
           String clinica = args[2];
-          System.out.println("Output: " + addServerIntf.listarMedicos(clinica));
+          System.out.println(addServerIntf.listarMedicos(clinica));
 
         } else {
           System.out.println("Output: Número de argumentos errado");
