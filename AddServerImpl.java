@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Statement;
 
 public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf {
 
@@ -53,21 +54,23 @@ public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID,
     }
     
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-      Statement stmt = con.createStatement();
+      Statement stmt = conn.createStatement();
       String sql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " + 
                     "VALUES (" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID + ")";
               
       int x = stmt.executeUpdate(sql);
       
-      if (x > 0){            
-          System.out.println("Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID);            
-      } else {
-          System.out.println("Erro a marcar a consulta");  
+      if (x == 0){            
+        return "Erro a marcar a consulta";  
+          
       }
         } catch (SQLException e) {
         e.printStackTrace();
         throw new RemoteException("Erro ao marcar consulta", e);
   }
+
+  return "Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, " + clientID + ", " + medicID;            
+
 }
 
 @Override

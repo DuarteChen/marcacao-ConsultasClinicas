@@ -32,10 +32,10 @@ public class AddClient {
     
         if (args.length == 8) {
 
-        Int dia = Interger.parseInt(args[2]);
-        String mes = Interger.parseInt(args[3]);
-        String ano = Interger.parseInt(args[4]);
-        String hora = Interger.parseInt(args[5]);
+        int dia = Integer.parseInt(args[2]);
+        int mes = Integer.parseInt(args[3]);
+        int ano = Integer.parseInt(args[4]);
+        int hora = Integer.parseInt(args[5]);
 
         int clientID = Integer.parseInt(args[6].trim());
         
