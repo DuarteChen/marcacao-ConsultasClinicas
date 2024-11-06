@@ -74,29 +74,34 @@ public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID,
 }
 
 @Override
-public String cancelarConsulta(int dia, int mes, int  ano, int hora, int clientID) throws RemoteException {
+public String removerConsulta(int idConsulta) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";
 
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-      Statement stmt = conn.createStatement();
-      String sql = "DELETE FROM Consulta WHERE data = '" + ano + "-" + mes + "-" + dia + " " + hora + ":00' AND Cliente_idCliente = " + clientID;
-      
-      int x = stmt.executeUpdate(sql);
-      
-      if (x == 0){            
-        return "Erro a marcar a consulta";  
-      }
+        String sql = "DELETE FROM Consulta WHERE idConsulta = ?";
 
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idConsulta);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                return "Consulta removida com sucesso: ID Consulta " + idConsulta;
+            } else {
+                throw new RemoteException("Erro: a consulta com ID Consulta " + idConsulta + 
+                                          " e ID Cliente não foi encontrada.");
+            }
+        }
     } catch (SQLException e) {
         e.printStackTrace();
-        throw new RemoteException("Erro ao marcar consulta", e);
-  }
-
-  return "Consulta cancelada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, Cliente: " + clientID;
-
+        throw new RemoteException("Erro ao remover consulta", e);
+    }
 }
+
+
+
+
 
 @Override
 public String listarConsultas(String idCliente) throws RemoteException {

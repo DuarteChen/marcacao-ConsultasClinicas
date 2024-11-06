@@ -4,21 +4,17 @@ public class AddClient {
     try {
       String addServerURL = "rmi://" + args[0] + "/AddServer";
       AddServerIntf addServerIntf = (AddServerIntf)Naming.lookup(addServerURL);
-      if (args[1].trim().equals("cancelarConsulta")){
+      if (args[1].trim().equals("removerConsulta")){
 
       
-        if (args.length == 7) {
+        if (args.length == 3) {
 
-          int dia = Integer.parseInt(args[2]);
-          int mes = Integer.parseInt(args[3]);
-          int ano = Integer.parseInt(args[4]);
-          int hora = Integer.parseInt(args[5]);
   
-          int clientID = Integer.parseInt(args[6].trim());
+          int consultaID = Integer.parseInt(args[2].trim());
           
-          System.out.println(" A tentar cancelar consulta para o dia: " + dia + "-"+ mes + "-" + ano + " às " + hora + ":00 Para " + clientID + ".");
+          System.out.println(" A tentar cancelar consulta" + consultaID);
           
-          System.out.println("Output: " + addServerIntf.cancelarConsulta(dia, mes , ano, hora, clientID));
+          System.out.println("Output: " + addServerIntf.removerConsulta(consultaID));
           } else {
             System.out.println("Output: Número de argumentos errado");
           }
