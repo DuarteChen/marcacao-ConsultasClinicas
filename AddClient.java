@@ -12,7 +12,7 @@ public class AddClient {
   
           int consultaID = Integer.parseInt(args[2].trim());
           
-          System.out.println(" A tentar cancelar consulta" + consultaID);
+          System.out.println(" A tentar cancelar consulta " + consultaID);
           
           System.out.println("Output: " + addServerIntf.removerConsulta(consultaID));
           } else {
@@ -39,7 +39,7 @@ public class AddClient {
 
       } else if (args[1].trim().equals("marcarConsulta")) {
       
-          if (args.length == 8) {
+          if (args.length == 9) {
 
           int dia = Integer.parseInt(args[2]);
           int mes = Integer.parseInt(args[3]);
@@ -48,10 +48,12 @@ public class AddClient {
 
           int clientID = Integer.parseInt(args[6].trim());
           
-          int medicID = Integer.parseInt(args[7].trim());
-          System.out.println(" A tentar marcar consulta para o dia: " + dia + "-"+ mes + "-" + ano + " às " + hora + ":00 Para " + clientID + " com médico " + medicID);
+          int clinicaID = Integer.parseInt(args[7].trim());
+
+          int especialidadeID = Integer.parseInt(args[8].trim());
+          System.out.println(" A tentar marcar consulta para o dia: " + dia + "-"+ mes + "-" + ano + " às " + hora + ":00 Para " + clientID + " com especialidade " + especialidadeID + " na cliníca " + clinicaID);
           
-          System.out.println("Output: " + addServerIntf.marcarConsulta(dia, mes , ano, hora, clientID, medicID));
+          System.out.println("Output: " + addServerIntf.marcarConsulta(dia, mes , ano, hora, clientID, clinicaID, especialidadeID));
           } else {
             System.out.println("Output: Número de argumentos errado");
           }

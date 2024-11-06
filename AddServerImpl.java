@@ -44,34 +44,57 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
   }
 
   @Override
-public String marcarConsulta(int dia, int mes, int  ano, int hora, int clientID, int medicID) throws RemoteException {
-    String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
-    String user = "user";
-    String password = "user";
-
-    if (hora < 8 || hora > 20) {
-      return "Às " + hora + ":00 a clínica está fechada";
-    }
-    
-    try (Connection conn = DriverManager.getConnection(url, user, password)) {
-      Statement stmt = conn.createStatement();
-      String sql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " + 
-                    "VALUES ('" + ano + "-" + mes + "-" + dia + " " + hora + ":00', " + clientID + ", " + medicID + ")";
-              
-      int x = stmt.executeUpdate(sql);
-      
-      if (x == 0){            
-        return "Erro a marcar a consulta";  
+  public String marcarConsulta(int dia, int mes, int ano, int hora, int clientID, int clinicaID, int especialidadeID) throws RemoteException {
+      String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+      String user = "user";
+      String password = "user";
+  
+      if (hora < 8 || hora > 20) {
+          return "Às " + hora + ":00 a clínica está fechada";
       }
-
-    } catch (SQLException e) {
-    e.printStackTrace();
-    throw new RemoteException("Erro ao marcar consulta: ", e);
+      
+      try (Connection conn = DriverManager.getConnection(url, user, password)) {
+          // Check for available medics with the specified specialty and clinic
+          String checkSql = "SELECT M.idMedico FROM Medico M " +
+                            "JOIN tipoMedico T ON M.tipoMedico_idTipoMedico = T.idTipoMedico " +
+                            "WHERE T.idTipoMedico = ? AND M.Clinica_idClinica = ? " +
+                            "AND M.idMedico NOT IN (SELECT Medico_idMedico FROM Consulta " +
+                            "WHERE data = ?)";
+          
+          try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+              checkStmt.setInt(1, especialidadeID);
+              checkStmt.setInt(2, clinicaID);
+              checkStmt.setString(3, ano + "-" + mes + "-" + dia + " " + hora + ":00");
+              
+              ResultSet rs = checkStmt.executeQuery();
+              if (rs.next()) {
+                  int medicoID = rs.getInt("idMedico");
+                  
+                  // Schedule the consultation
+                  String insertSql = "INSERT INTO Consulta (data, Cliente_idCliente, Clinica_idClinica, Medico_idMedico) " +
+                                     "VALUES (?, ?, ?, ?)";
+                  try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                      insertStmt.setString(1, ano + "-" + mes + "-" + dia + " " + hora + ":00");
+                      insertStmt.setInt(2, clientID);
+                      insertStmt.setInt(3, clinicaID);
+                      insertStmt.setInt(4, medicoID);
+                      
+                      int x = insertStmt.executeUpdate();
+                      if (x > 0) {
+                          return "Consulta marcada com sucesso para " + ano + "-" + mes + "-" + dia + " " + hora + ":00, Cliente: " + clientID + ", Médico: " + medicoID;
+                      } else {
+                          return "Erro a marcar a consulta";
+                      }
+                  }
+              } else {
+                  return "Não há médicos disponíveis com essa especialidade na data e hora solicitadas.";
+              }
+          }
+      } catch (SQLException e) {
+          e.printStackTrace();
+          throw new RemoteException("Erro ao marcar consulta: ", e);
+      }
   }
-
-  return "Consulta marcada com sucesso para dia" + ano + "-" + mes + "-" + dia + " " + hora + ":00, Cliente: " + clientID + ", Médico: " + medicID;            
-
-}
 
 @Override
 public String removerConsulta(int idConsulta) throws RemoteException {
