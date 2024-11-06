@@ -71,13 +71,12 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
                   int medicoID = rs.getInt("idMedico");
                   
                   // Schedule the consultation
-                  String insertSql = "INSERT INTO Consulta (data, Cliente_idCliente, Clinica_idClinica, Medico_idMedico) " +
+                  String insertSql = "INSERT INTO Consulta (data, Cliente_idCliente, Medico_idMedico) " +
                                      "VALUES (?, ?, ?, ?)";
                   try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                       insertStmt.setString(1, ano + "-" + mes + "-" + dia + " " + hora + ":00");
                       insertStmt.setInt(2, clientID);
-                      insertStmt.setInt(3, clinicaID);
-                      insertStmt.setInt(4, medicoID);
+                      insertStmt.setInt(3, medicoID);
                       
                       int x = insertStmt.executeUpdate();
                       if (x > 0) {
