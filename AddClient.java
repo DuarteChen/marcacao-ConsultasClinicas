@@ -60,7 +60,7 @@ public class AddClient {
             System.out.println("Output: Número de argumentos errado");
           }
           
-      } else {
+      } else { 
         System.out.println("Output: Erro nos argumentos\n");
       }
     } catch(Exception e) {
