@@ -5,4 +5,7 @@ public interface AddServerIntf extends Remote {
   String listarConsultas(String idCliente) throws RemoteException;
   String removerConsulta(int idConsulta) throws RemoteException;
 
+  String listarClinicas() throws RemoteException;
+  String listarEspecialidades(int idClinica) throws RemoteException;
+
 }

@@ -154,5 +154,69 @@ public String listarConsultas(String idCliente) throws RemoteException {
 
     return result.length() > 0 ? result.toString() : "Nenhuma consulta encontrada para o cliente.";
 }
+
+
+@Override
+public String listarClinicas() throws RemoteException {
+  String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+  String user = "user";
+  String password = "user";
+  StringBuilder result = new StringBuilder();
+
+  try (Connection conn = DriverManager.getConnection(url, user, password)) {
+    String sql = "SELECT * FROM Clinica;";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+     
+
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          int idClinicaDb = rs.getInt("idClinica");
+          String nomeClincaDB = rs.getString("nome");
+          result.append(idClinicaDb).append(". - Clinca: ").append(nomeClincaDB).append("\n");
+        }
+      }
+    }
+  } catch (SQLException e) {
+    e.printStackTrace();
+    throw new RemoteException("Erro ao listar clínicas.", e);
+  }
+
+  return result.length() > 0 ? result.toString() : "Nenhuma clínica encontrada.";
+}
+
+@Override
+public String listarEspecialidades(int idClinica) throws RemoteException {
+  String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+  String user = "user";
+  String password = "user";
+  StringBuilder result = new StringBuilder();
+
+  try (Connection conn = DriverManager.getConnection(url, user, password)) {
+    String sql = "SELECT DISTINCT tm.tipoMedico " +
+                    "FROM clinica c JOIN medico m ON c.idClinica = m.Clinica_idClinica JOIN tipoMedico tm ON m.tipoMedico_idTipoMedico = tm.idTipoMedico" +
+                    "WHERE c.idClinica = ?;";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String idClinicaString = "" + idClinica;
+        stmt.setString(1, idClinicaString);
+     
+
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          int idEspecialidadeDb = rs.getInt("idTipoMedico");
+          String nomeEspecialidadeDB = rs.getString("tipoMedico");
+          result.append(idEspecialidadeDb).append(". - Especialidade: ").append(nomeEspecialidadeDB).append("\n");
+        }
+      }
+    }
+  } catch (SQLException e) {
+    e.printStackTrace();
+    throw new RemoteException("Erro ao listar especialidades.", e);
+  }
+
+  return result.length() > 0 ? result.toString() : "Nenhuma especialidade encontrada.";
+}
+
+
+
   
 }
