@@ -64,7 +64,7 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
           try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
               checkStmt.setInt(1, especialidadeID);
               checkStmt.setInt(2, clinicaID);
-              checkStmt.setString(3, ano + "-" + mes + "-" + dia + " " + hora + ":00");
+              checkStmt.setString(3, ano + "-" + mes + "-" + dia + " " + hora + ":00"); //yyyy-mm-dd hh:mm:ss
               
               ResultSet rs = checkStmt.executeQuery();
               if (rs.next()) {
@@ -120,10 +120,6 @@ public String removerConsulta(int idConsulta) throws RemoteException {
         throw new RemoteException("Erro ao remover consulta", e);
     }
 }
-
-
-
-
 
 @Override
 public String listarConsultas(String idCliente) throws RemoteException {
