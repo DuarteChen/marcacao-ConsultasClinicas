@@ -191,10 +191,10 @@ public String listarEspecialidades(int idClinica) throws RemoteException {
   String password = "user";
   StringBuilder result = new StringBuilder();
 
-  try (Connection conn = DriverManager.getConnection(url, user, password)) {
-    String sql = "SELECT DISTINCT tm.tipoMedico " +
-                    "FROM clinica c JOIN medico m ON c.idClinica = m.Clinica_idClinica JOIN tipoMedico tm ON m.tipoMedico_idTipoMedico = tm.idTipoMedico" +
-                    "WHERE c.idClinica = ?;";
+  try (Connection conn = DriverManager.getConnection(url, user, password)) {              
+      String sql = "SELECT DISTINCT tm.idTipoMedico, tm.tipoMedico " + 
+       "FROM Medico m JOIN tipoMedico tm ON m.tipoMedico_idTipoMedico = tm.idTipoMedico " +
+       "WHERE m.Clinica_idClinica = ?;";
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         String idClinicaString = "" + idClinica;
         stmt.setString(1, idClinicaString);
