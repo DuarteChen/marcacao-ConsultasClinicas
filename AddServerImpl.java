@@ -96,7 +96,7 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
   }
 
 @Override
-public String removerConsulta(int idConsulta) throws RemoteException {
+public String removerConsulta(int idConsulta, int idClient) throws RemoteException {
     String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
     String user = "user";
     String password = "user";
@@ -106,7 +106,7 @@ public String removerConsulta(int idConsulta) throws RemoteException {
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idConsulta);
-            stmt.setInt(2, user);
+            stmt.setInt(2, idClient);
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
