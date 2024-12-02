@@ -102,10 +102,11 @@ public String removerConsulta(int idConsulta) throws RemoteException {
     String password = "user";
 
     try (Connection conn = DriverManager.getConnection(url, user, password)) {
-        String sql = "DELETE FROM Consulta WHERE idConsulta = ?";
+        String sql = "DELETE FROM Consulta WHERE idConsulta = ? AND Cliente_idCliente = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idConsulta);
+            stmt.setInt(2, user);
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
