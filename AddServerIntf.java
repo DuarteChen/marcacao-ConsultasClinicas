@@ -1,7 +1,11 @@
 import java.rmi.*;
 public interface AddServerIntf extends Remote {
-  String listMedics(String clinicName) throws RemoteException;
-  String marcarConsulta(int idClient, int idMedico, String dataHora) throws RemoteException;
-  String listConsultas(String idCliente) throws RemoteException;
+  String listarMedicos(String clinicName) throws RemoteException;
+  String marcarConsulta(int dia, int mes, int ano, int hora, int clientID, int clinicaID, int especialidadeID) throws RemoteException;
+  String listarConsultas(String idCliente) throws RemoteException;
+  String removerConsulta(int idConsulta) throws RemoteException;
+
+  String listarClinicas() throws RemoteException;
+  String listarEspecialidades(int idClinica) throws RemoteException;
 
 }

@@ -18,7 +18,7 @@ public class AddServer {
     }
 
 
-    String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+    String url = "jdbc:mysql://localhost:3306/dbCDProjeto"; 
     String user = "user";
     String password = "user";
 
