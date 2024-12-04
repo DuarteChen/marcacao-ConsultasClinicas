@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf {
 
@@ -53,6 +55,16 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
           return "Às " + hora + ":00 a clínica está fechada";
       }
       
+    System.out.println("Entrei");
+    LocalDate today = LocalDate.now();
+    System.out.println(today);
+    LocalDate appointmentDate = LocalDate.of(ano, mes, dia);
+
+    if (appointmentDate.isBefore(today)) {
+        return "As consultas não podem ser marcadas no passado.";
+    }
+      
+        
       try (Connection conn = DriverManager.getConnection(url, user, password)) {
           // Check for available medics with the specified specialty and clinic
           String checkSql = "SELECT M.idMedico FROM Medico M " +
