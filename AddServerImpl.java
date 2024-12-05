@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.time.LocalDateTime;
+
 
 public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf {
 
@@ -57,23 +59,28 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
       }
       
     
-    LocalDate today = LocalDate.now();
-    LocalDate appointmentDate = null;
-    try {
-            appointmentDate = LocalDate.of(ano, mes, dia);
-            System.out.println("Appointment Date: " + appointmentDate);
+        LocalDateTime appointmentDateTime = null;
+        LocalDateTime now = LocalDateTime.now();
+    
+        
+        try {
+            appointmentDateTime = LocalDateTime.of(ano, mes, dia, hora, 0);
+            System.out.println("Appointment Date and Time: " + appointmentDateTime);
         } catch (DateTimeParseException e) {
-           return "Error: Invalid date format. Please check the year, month, and day values.";
+            System.err.println("Error: Invalid date format. Please check the year, month, day, hour, and minute values.");
         } catch (Exception e) {
-            return "Error " + e.getMessage();
+            System.err.println("Error: " + e.getMessage());
         }
+        
+        
+        
+        if (appointmentDateTime != null) {
+            if (appointmentDateTime.isBefore(now)) {
+                return "As consultas não podem ser marcadas no passado.";
+            }
+        }
+    
 
-
-
-
-    if (appointmentDate.isBefore(today)) {
-        return "As consultas não podem ser marcadas no passado.";
-    }
       
         
       try (Connection conn = DriverManager.getConnection(url, user, password)) {
@@ -146,8 +153,8 @@ public String removerConsulta(int idConsulta, int idClient) throws RemoteExcepti
             if (rowsAffected > 0) {
                 return "Consulta removida com sucesso: ID Consulta " + idConsulta;
             } else {
-                throw new RemoteException("Erro: a consulta com ID Consulta " + idConsulta + 
-                                          " e ID Cliente não foi encontrada.");
+                
+                return "Erro: a consulta com ID Consulta " + idConsulta + " não foi encontrada.";
             }
         }
     } catch (SQLException e) {
