@@ -79,11 +79,40 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
                 return "As consultas não podem ser marcadas no passado.";
             }
         }
-    
+      
+
+
+
+
+
 
       
         
-      try (Connection conn = DriverManager.getConnection(url, user, password)) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+
+          // Check if the client exists
+          String checkUserSql = "SELECT idCliente FROM Cliente WHERE idCliente = ?;";
+          try (PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql)) {
+              checkUserStmt.setInt(1, clientID);
+              ResultSet userRs = checkUserStmt.executeQuery();
+              if (!userRs.next()) {
+                  // Client does not exist, create a new one
+                  String insertUserSql = "INSERT INTO Cliente (nome) VALUES (?);";
+                  try (PreparedStatement insertUserStmt = conn.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
+                      insertUserStmt.setString(1, "Cliente"); // Replace with actual data
+                      insertUserStmt.executeUpdate();
+      
+                      // Get the newly generated client ID
+                      ResultSet generatedKeys = insertUserStmt.getGeneratedKeys();
+                      if (generatedKeys.next()) {
+                          clientID = generatedKeys.getInt(1); // Update clientID with the new ID
+                      } else {
+                          return "Erro ao criar um novo cliente.";
+                      }
+                  }
+              }
+          }
+      
           // Check for available medics with the specified specialty and clinic
           String checkSql = "SELECT M.idMedico FROM Medico M " +
                             "JOIN tipoMedico T ON M.tipoMedico_idTipoMedico = T.idTipoMedico " +
@@ -94,7 +123,7 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
           try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
               checkStmt.setInt(1, especialidadeID);
               checkStmt.setInt(2, clinicaID);
-              checkStmt.setString(3, ano + "-" + mes + "-" + dia + " " + hora + ":00"); //yyyy-mm-dd hh:mm:ss
+              checkStmt.setString(3, ano + "-" + mes + "-" + dia + " " + hora + ":00"); // yyyy-mm-dd hh:mm:ss
               
               ResultSet rs = checkStmt.executeQuery();
               if (rs.next()) {
@@ -121,13 +150,11 @@ public class AddServerImpl extends UnicastRemoteObject implements AddServerIntf 
           }
       } catch (SQLException e) {
           e.printStackTrace();
-          //javax.xml.ws.soap.SOAPFaultException:
-          //throw new RemoteException("Erro ao marcar consulta: ", e);
           if (e instanceof java.sql.SQLIntegrityConstraintViolationException) {
-            return "Erro ao marcar consulta: Já existe uma consulta marcada para este horário.";
-        } else {
-            return "Erro ao marcar consulta: " + e.getMessage();
-        }
+              return "Erro ao marcar consulta: Já existe uma consulta marcada para este horário.";
+          } else {
+              return "Erro ao marcar consulta: " + e.getMessage();
+          }
       }
       /*
       if (e instanceof javax.xml.ws.soap.SOAPFaultException) {
