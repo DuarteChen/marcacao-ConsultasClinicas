@@ -285,6 +285,36 @@ public String listarEspecialidades(int idClinica) throws RemoteException {
   return result.length() > 0 ? result.toString() : "Nenhuma especialidade encontrada.";
 }
 
+@Override
+public String locClinica(String idClinica) throws RemoteException {
+  String url = "jdbc:mysql://localhost:3306/dbCDProjeto";
+  String user = "user";
+  String password = "user";
+  StringBuilder result = new StringBuilder();
+
+  try (Connection conn = DriverManager.getConnection(url, user, password)) {              
+      String sql = "SELECT latitude, longitude " + 
+       "FROM Clinica " +
+       "WHERE idClinica = ?;";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        int idClinicaInteiro = Integer.parseInt(idClinica);
+        stmt.setInt(1, idClinicaInteiro);
+
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          double latitude = rs.getDouble("latitude");
+          double longitude = rs.getDouble("longitude");
+          result.append(latitude).append(";").append(longitude).append("\n");
+        }
+      }
+    }
+  } catch (SQLException e) {
+    e.printStackTrace();
+    throw new RemoteException("Erro ao obter localização.", e);
+  }
+
+  return result.length() > 0 ? result.toString() : "Nenhuma localização encontrada.";
+}
 
 
   
